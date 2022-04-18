@@ -1,0 +1,26 @@
+version: "3.7" 
+services:
+  php:
+    build:
+      context: .
+    image: phpdocker
+    container_name: php
+    ports:
+      - "9000:9000"
+    volumes:
+      - ".:/var/www/slim_app:delegated" 
+    command: php -S 0.0.0.0:9000
+   
+  mysqldb:
+    image: mysql
+    container_name: bd_barkyn
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
